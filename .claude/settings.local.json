@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:zahcomputers.pk)",
+      "Bash(pnpm:*)",
+      "Bash(npm:*)",
+      "Bash(export:*)",
+      "Bash(python3:*)",
+      "Bash(curl:*)",
+      "Bash(node:*)",
+      "Bash(npx supabase:*)",
+      "Bash(cp:*)",
+      "Bash(superdesign login:*)",
+      "Bash(superdesign init:*)",
+      "Read(//c/Users/moizp/AppData/Local/com.vercel.cli//**)",
+      "Read(//c/Users/moizp/AppData/Roaming/com.vercel.cli//**)",
+      "Read(//c/Users/moizp/AppData/Local/com.vercel.cli/**)"
+    ]
+  }
+}
