@@ -1,22 +1,22 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser'
 
 export default function LoginPage() {
-  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    const reason = searchParams.get('reason')
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const reason = params.get('reason')
     if (reason === 'not_admin') {
       setError('This account is not authorized as an admin. Contact an administrator.')
     }
-  }, [searchParams])
+  }, [])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
