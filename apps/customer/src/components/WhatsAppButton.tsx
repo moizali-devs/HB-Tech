@@ -1,5 +1,7 @@
 'use client'
 
+import { whatsAppOrderUrl } from '@/lib/constants'
+
 export default function WhatsAppButton({
   orderNumber,
   customerName,
@@ -9,13 +11,11 @@ export default function WhatsAppButton({
   customerName: string
   total: number
 }) {
-  const message = encodeURIComponent(
-    `Hi HB Tech & Gaming! I just placed an order.\n\nOrder Number: ${orderNumber}\nName: ${customerName}\nTotal: Rs. ${total.toLocaleString('en-PK')}\n\nPlease confirm my order. Thank you!`
-  )
+  const message = `Hi HB Tech & Gaming! I just placed an order.\n\nOrder Number: ${orderNumber}\nName: ${customerName}\nTotal: Rs. ${total.toLocaleString('en-PK')}\n\nPlease confirm my order. Thank you!`
 
   return (
     <a
-      href={`https://wa.me/923208378859?text=${message}`}
+      href={whatsAppOrderUrl(message)}
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex items-center justify-center gap-3 w-full sm:w-auto bg-[#25D366] hover:bg-[#20BD5A] text-white font-semibold px-6 py-3.5 rounded-xl transition-colors shadow-lg hover:shadow-xl"

@@ -1,21 +1,32 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { useCartStore } from '@/store/cart'
 import Image from 'next/image'
-import { supabase } from '@/lib/supabase'
+import { whatsAppOrderUrl } from '@/lib/constants'
 import { Banknote } from 'lucide-react'
 
-function generateOrderNumber() {
-  const num = Math.floor(Math.random() * 90000) + 10000
-  return `HBT-${num}`
+function buildOrderMessage(
+  items: { name: string; price: number; quantity: number }[],
+  customerName: string,
+  address: string,
+  notes?: string
+): string {
+  const lines: string[] = ['Hello, I want to place an order.', '']
+  for (const item of items) {
+    lines.push(`Product: ${item.name}`)
+    lines.push(`Quantity: ${item.quantity}`)
+    lines.push(`Price: Rs. ${(item.price * item.quantity).toLocaleString('en-PK')}`)
+    lines.push('')
+  }
+  lines.push(`Customer Name: ${customerName}`)
+  lines.push(`Address: ${address}`)
+  if (notes?.trim()) lines.push(`Notes: ${notes.trim()}`)
+  return lines.join('\n')
 }
 
 export default function CheckoutPage() {
-  const { items, total, clearCart } = useCartStore()
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const { items, total } = useCartStore()
   const [form, setForm] = useState({
     customer_name: '',
     customer_email: '',
@@ -40,42 +51,12 @@ export default function CheckoutPage() {
 
   const subtotal = total()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-
-    const order_number = generateOrderNumber()
-    const orderItems = items.map((i) => ({
-      product_id: i.id,
-      name: i.name,
-      price: i.price,
-      quantity: i.quantity,
-      image: i.image,
-    }))
-
-    const { data, error } = await supabase
-      .from('orders')
-      .insert({
-        ...form,
-        order_number,
-        items: orderItems,
-        subtotal,
-        total: subtotal,
-        payment_method: 'cod',
-        status: 'pending',
-      })
-      .select('id')
-      .single()
-
-    setLoading(false)
-
-    if (error || !data) {
-      alert('Failed to place order. Please try again.')
-      return
-    }
-
-    clearCart()
-    router.push(`/order-confirmed/${data.id}`)
+    const address = [form.delivery_address, form.city].filter(Boolean).join(', ')
+    const message = buildOrderMessage(items, form.customer_name, address, form.notes)
+    const url = whatsAppOrderUrl(message)
+    window.open(url, '_blank', 'noopener,noreferrer')
   }
 
   const fields = [
@@ -186,10 +167,9 @@ export default function CheckoutPage() {
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full mt-6 btn-primary py-4 text-lg disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full mt-6 btn-primary py-4 text-lg"
             >
-              {loading ? 'Placing Order...' : 'Place Order'}
+              Place Order
             </button>
           </div>
         </form>

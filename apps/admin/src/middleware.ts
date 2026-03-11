@@ -46,7 +46,12 @@ export async function middleware(request: NextRequest) {
 
   if (!admin) {
     await supabase.auth.signOut()
-    return NextResponse.redirect(new URL('/login', request.url))
+    const loginUrl = new URL('/login', request.url)
+    loginUrl.searchParams.set('reason', 'not_admin')
+    const redirectRes = NextResponse.redirect(loginUrl)
+    // Preserve cookie updates from signOut so session is cleared in the browser
+    response.cookies.getAll().forEach((c) => redirectRes.cookies.set(c.name, c.value, c))
+    return redirectRes
   }
 
   return response

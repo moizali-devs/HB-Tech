@@ -5,6 +5,7 @@ import CategoryGrid from '@/components/CategoryGrid'
 import type { Product, Category } from '@hb-tech/shared'
 import Link from 'next/link'
 import { ArrowRight, MessageSquare } from 'lucide-react'
+import { WHATSAPP_NUMBER } from '@/lib/constants'
 
 export const revalidate = 60
 
@@ -104,7 +105,7 @@ export default async function HomePage() {
                 Our team is available on WhatsApp for personalized recommendations, price inquiries, and bulk orders.
               </p>
               <a
-                href="https://wa.me/923208378859"
+                href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary text-sm sm:text-base px-8 py-3"

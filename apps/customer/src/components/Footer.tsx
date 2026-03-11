@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { MessageCircle, Mail, MapPin } from 'lucide-react'
+import { MessageCircle, MapPin } from 'lucide-react'
+import { WHATSAPP_NUMBER } from '@/lib/constants'
 
 export default function Footer() {
   const year = new Date().getFullYear()
@@ -27,7 +28,7 @@ export default function Footer() {
 
             <div className="mt-6 flex flex-col gap-2.5">
               <a
-                href="https://wa.me/923208378859"
+                href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm text-slate-500 dark:text-zinc-500 hover:text-accent dark:hover:text-accent transition-colors"
@@ -71,7 +72,7 @@ export default function Footer() {
             </p>
             <nav className="flex flex-col gap-2.5">
               <a
-                href="https://wa.me/923208378859"
+                href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-slate-500 dark:text-zinc-500 hover:text-slate-900 dark:hover:text-white transition-colors"
