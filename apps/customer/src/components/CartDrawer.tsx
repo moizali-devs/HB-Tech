@@ -74,7 +74,7 @@ export default function CartDrawer() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-hb-muted text-xs">
-                          —
+                          No image
                         </div>
                       )}
                     </div>
@@ -140,3 +140,4 @@ export default function CartDrawer() {
     </AnimatePresence>
   )
 }
+

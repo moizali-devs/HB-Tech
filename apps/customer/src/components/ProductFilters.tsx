@@ -121,7 +121,7 @@ export default function ProductFilters({ categories }: { categories: Category[] 
             onBlur={(e) => updateParam('min', e.target.value)}
             className="input-field"
           />
-          <span className="text-slate-400">–</span>
+          <span className="text-slate-400">to</span>
           <input
             type="number"
             placeholder="Max"
@@ -134,3 +134,4 @@ export default function ProductFilters({ categories }: { categories: Category[] 
     </div>
   )
 }
+

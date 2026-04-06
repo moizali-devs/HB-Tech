@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props) {
   const product = await getProduct(params.slug)
   if (!product) return {}
   return {
-    title: `${product.name} — HB Tech & Gaming`,
+    title: `${product.name} HB Tech & Gaming`,
     description: product.description?.slice(0, 155),
   }
 }
@@ -33,3 +33,4 @@ export default async function ProductPage({ params }: Props) {
   if (!product) notFound()
   return <ProductDetail product={product} />
 }
+

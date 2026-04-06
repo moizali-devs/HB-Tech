@@ -6,7 +6,7 @@ import CartDrawer from '@/components/CartDrawer'
 import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'HB Tech & Gaming — Computer Hardware & Gaming Store',
+  title: 'HB Tech & Gaming Computer Hardware & Gaming Store',
   description:
     'Shop the latest computer hardware, gaming peripherals, and tech accessories at HB Tech & Gaming. New, used, and refurbished products at great prices.',
 }
@@ -33,3 +33,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
+

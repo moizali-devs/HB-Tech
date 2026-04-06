@@ -4,6 +4,7 @@ import { WHATSAPP_NUMBER } from '@/lib/constants'
 
 export default function Footer() {
   const year = new Date().getFullYear()
+  const PORTFOLIO_URL = ''
 
   return (
     <footer className="mt-auto border-t border-slate-100 dark:border-hb-border bg-slate-50 dark:bg-hb-surface">
@@ -23,7 +24,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm text-slate-500 dark:text-zinc-500 leading-relaxed max-w-xs">
-              Pakistan&rsquo;s trusted source for computer hardware &amp; gaming peripherals — new, used &amp; refurbished.
+              Pakistan&rsquo;s trusted source for computer hardware &amp; gaming peripherals, new, used &amp; refurbished.
             </p>
 
             <div className="mt-6 flex flex-col gap-2.5">
@@ -38,7 +39,7 @@ export default function Footer() {
               </a>
               <span className="inline-flex items-center gap-2 text-sm text-slate-500 dark:text-zinc-500">
                 <MapPin size={14} />
-                Lahore, Pakistan
+                Karachi, Pakistan
               </span>
             </div>
           </div>
@@ -89,13 +90,29 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="pt-6 border-t border-slate-200 dark:border-hb-border flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-slate-400 dark:text-zinc-600">
-            © {year} HB Tech &amp; Gaming. All rights reserved.
+            &copy; {year} HB Tech &amp; Gaming. All rights reserved.
+          </p>
+          <p className="text-xs text-slate-500 dark:text-zinc-500 text-center">
+            Website created by{' '}
+            {PORTFOLIO_URL ? (
+              <a
+                href={PORTFOLIO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-accent underline-offset-4 transition-colors hover:text-accent/80 hover:underline"
+              >
+                Moiz Ali
+              </a>
+            ) : (
+              <span className="font-medium text-accent">Moiz Ali</span>
+            )}
           </p>
           <p className="text-xs text-slate-400 dark:text-zinc-600">
-            Lahore, Pakistan
+            Karachi, Pakistan
           </p>
         </div>
       </div>
     </footer>
   )
 }
+
