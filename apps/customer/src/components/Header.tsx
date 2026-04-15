@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ShoppingCart, Sun, Moon, Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { useCartStore } from '@/store/cart'
@@ -16,6 +17,7 @@ export default function Header() {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/products', label: 'Products' },
+    { href: '/products?featured=true', label: 'Featured' },
     { href: '/category', label: 'Categories' },
   ]
 
@@ -24,15 +26,15 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[62px] flex items-center justify-between gap-4">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center shadow-glow-red-sm group-hover:shadow-glow-red transition-all duration-300">
-            <span className="font-heading font-bold text-white text-[13px] leading-none tracking-tight">HB</span>
-          </div>
-          <div className="hidden sm:flex flex-col leading-none">
-            <span className="font-heading font-semibold text-slate-900 dark:text-white text-[15px] tracking-tight">
-              Tech <span className="text-accent">&</span> Gaming
-            </span>
-          </div>
+        <Link href="/" className="flex items-center shrink-0 group">
+          <Image
+            src="/logo-site.png"
+            alt="HB Tech & Gaming"
+            width={345}
+            height={260}
+            priority
+            className="h-11 w-auto object-contain invert dark:invert-0"
+          />
         </Link>
 
         {/* Desktop Nav */}

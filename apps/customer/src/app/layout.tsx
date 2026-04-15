@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=JSON.parse(localStorage.getItem('hb-tech-theme')||'{}');if(t.state&&t.state.isDark===true)document.documentElement.classList.add('dark');else document.documentElement.classList.remove('dark');}catch(e){document.documentElement.classList.remove('dark');}})();`,
+            __html: `(function(){try{var t=JSON.parse(localStorage.getItem('hb-tech-theme-v2')||'{}');if(t.state&&t.state.isDark===true)document.documentElement.classList.add('dark');else document.documentElement.classList.remove('dark');}catch(e){document.documentElement.classList.remove('dark');}})();`,
           }}
         />
       </head>

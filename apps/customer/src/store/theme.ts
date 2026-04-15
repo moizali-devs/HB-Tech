@@ -12,6 +12,6 @@ export const useThemeStore = create<ThemeState>()(
       isDark: false,
       toggle: () => set((state) => ({ isDark: !state.isDark })),
     }),
-    { name: 'hb-tech-theme' }
+    { name: 'hb-tech-theme-v2' }
   )
 )

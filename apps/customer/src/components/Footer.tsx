@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { MessageCircle, MapPin } from 'lucide-react'
 import { WHATSAPP_NUMBER } from '@/lib/constants'
 
@@ -16,12 +17,13 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center shadow-glow-red-sm">
-                <span className="font-heading font-bold text-white text-[13px] leading-none">HB</span>
-              </div>
-              <span className="font-heading font-semibold text-slate-900 dark:text-white text-base tracking-tight">
-                Tech <span className="text-accent">&</span> Gaming
-              </span>
+              <Image
+                src="/logo-site.png"
+                alt="HB Tech & Gaming"
+                width={345}
+                height={260}
+                className="h-20 w-auto object-contain invert dark:invert-0"
+              />
             </div>
             <p className="text-sm text-slate-500 dark:text-zinc-500 leading-relaxed max-w-xs">
               Pakistan&rsquo;s trusted source for computer hardware &amp; gaming peripherals, new, used &amp; refurbished.
