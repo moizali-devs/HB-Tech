@@ -1,3 +1,7 @@
+// ProductCard -- used in every product grid throughout the storefront.
+// The entire card is wrapped in a Link so the full area is clickable,
+// but the Quick Add button stops propagation so it doesn't navigate.
+
 'use client'
 
 import Image from 'next/image'
@@ -6,6 +10,7 @@ import { Package, Plus } from 'lucide-react'
 import { useCartStore } from '@/store/cart'
 import type { Product } from '@hb-tech/shared'
 
+// Badge label and Tailwind color classes for each condition type.
 const conditionLabels: Record<string, { label: string; color: string }> = {
   new: {
     label: 'New',
@@ -30,6 +35,7 @@ export default function ProductCard({ product }: { product: Product }) {
   const badge = conditionLabels[product.condition]
 
   const handleAddToCart = (e: React.MouseEvent) => {
+    // Prevent the Link from firing so clicking Quick Add doesn't open the detail page.
     e.preventDefault()
     addItem({
       id: product.id,
@@ -65,7 +71,7 @@ export default function ProductCard({ product }: { product: Product }) {
             </div>
           )}
 
-          {/* Discount badge */}
+          {/* Discount badge -- top-left, shown only when compare_price > price */}
           {discountPercent > 0 && (
             <div className="absolute top-2.5 left-2.5">
               <span className="bg-accent text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-glow-red-sm">
@@ -74,14 +80,14 @@ export default function ProductCard({ product }: { product: Product }) {
             </div>
           )}
 
-          {/* Condition badge */}
+          {/* Condition badge -- top-right */}
           {badge && (
             <div className={`absolute top-2.5 right-2.5 text-[10px] font-semibold px-2 py-0.5 rounded-full ${badge.color}`}>
               {badge.label}
             </div>
           )}
 
-          {/* Out of stock overlay */}
+          {/* Out of stock overlay -- covers the whole image area */}
           {product.stock === 0 && (
             <div className="absolute inset-0 bg-white/80 dark:bg-hb-bg/80 flex items-center justify-center backdrop-blur-sm">
               <span className="text-slate-600 dark:text-zinc-400 font-semibold text-[11px] px-3 py-1.5 rounded-full border border-slate-200 dark:border-hb-border bg-white dark:bg-hb-surface">
@@ -90,7 +96,7 @@ export default function ProductCard({ product }: { product: Product }) {
             </div>
           )}
 
-          {/* Quick Add — slides up on hover */}
+          {/* Quick Add button -- hidden offscreen below, slides up on card hover */}
           {product.stock > 0 && (
             <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
               <button
@@ -104,7 +110,7 @@ export default function ProductCard({ product }: { product: Product }) {
           )}
         </div>
 
-        {/* Info */}
+        {/* Text info */}
         <div className="p-3.5 flex flex-col gap-2 flex-1">
           <h3 className="text-[13px] font-semibold text-slate-800 dark:text-zinc-100 line-clamp-2 leading-snug min-h-[2.5rem]">
             {product.name}

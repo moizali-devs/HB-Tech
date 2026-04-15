@@ -7,12 +7,12 @@ export interface CartItem {
   price: number
   image: string | null
   quantity: number
-  stock: number
+  stock: number   // stored so the UI can enforce the per-item maximum
 }
 
 interface CartState {
   items: CartItem[]
-  isOpen: boolean
+  isOpen: boolean   // controls the CartDrawer slide-out panel
   addItem: (item: Omit<CartItem, 'quantity'>) => void
   removeItem: (id: string) => void
   updateQuantity: (id: string, quantity: number) => void
@@ -33,6 +33,7 @@ export const useCartStore = create<CartState>()(
         set((state) => {
           const existing = state.items.find((i) => i.id === item.id)
           if (existing) {
+            // Increment quantity but never exceed available stock.
             return {
               items: state.items.map((i) =>
                 i.id === item.id
@@ -43,12 +44,14 @@ export const useCartStore = create<CartState>()(
           }
           return { items: [...state.items, { ...item, quantity: 1 }] }
         })
+        // Always open the drawer after adding so the user gets feedback.
         set({ isOpen: true })
       },
 
       removeItem: (id) =>
         set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
 
+      // Setting quantity to 0 or below removes the item entirely.
       updateQuantity: (id, quantity) =>
         set((state) => ({
           items: quantity <= 0
@@ -66,6 +69,10 @@ export const useCartStore = create<CartState>()(
       itemCount: () =>
         get().items.reduce((sum, item) => sum + item.quantity, 0),
     }),
-    { name: 'hb-tech-cart', partialize: (state) => ({ items: state.items }) }
+    {
+      name: 'hb-tech-cart',
+      // Only persist items -- isOpen resets to false on page load intentionally.
+      partialize: (state) => ({ items: state.items }),
+    }
   )
 )

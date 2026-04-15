@@ -1,3 +1,9 @@
+// ProductForm -- used for both creating and editing products.
+// If a `product` prop is provided, the form initialises with its data and submits a PATCH.
+// If no `product` is provided, it submits a fresh INSERT.
+// Images can be added two ways: by URL (any publicly accessible image) or by file upload
+// to the Supabase Storage 'product-images' bucket.
+
 'use client'
 
 import { useState, useCallback } from 'react'
@@ -10,17 +16,21 @@ import type { Category, Product } from '@hb-tech/shared'
 
 interface Props {
   categories: Category[]
-  product?: Product
+  product?: Product   // present = edit mode, absent = create mode
 }
 
 const CONDITIONS = ['new', 'used', 'refurbished', 'open_box'] as const
 
+// Local copy of slugify to keep the admin app self-contained.
+// Mirrors the implementation in packages/shared/src/utils.ts.
 function slugify(text: string) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 }
 
 export default function ProductForm({ categories, product }: Props) {
   const router = useRouter()
+  // Browser client is used here because this is a client component; it uses cookies
+  // to carry the admin session and respects RLS (admin can write products).
   const supabase = createSupabaseBrowserClient()
 
   const [form, setForm] = useState({
@@ -40,6 +50,7 @@ export default function ProductForm({ categories, product }: Props) {
   const [saving, setSaving] = useState(false)
   const [urlInput, setUrlInput] = useState('')
 
+  // Add a URL to the images list. Ignores duplicates.
   const addImageUrl = () => {
     const url = urlInput.trim()
     if (url && !images.includes(url)) {
@@ -48,6 +59,8 @@ export default function ProductForm({ categories, product }: Props) {
     }
   }
 
+  // Upload dropped/selected files to Supabase Storage and push public URLs to state.
+  // Files are named with a timestamp + random suffix to avoid collisions.
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setUploading(true)
     const urls: string[] = []
@@ -85,6 +98,7 @@ export default function ProductForm({ categories, product }: Props) {
 
     const payload = {
       name: form.name,
+      // Fall back to auto-slugified name if the slug field was left blank.
       slug: form.slug || slugify(form.name),
       description: form.description,
       price: parseFloat(form.price),
@@ -105,7 +119,7 @@ export default function ProductForm({ categories, product }: Props) {
 
     setSaving(false)
     router.push('/products')
-    router.refresh()
+    router.refresh()   // invalidate the server component cache on the products list
   }
 
   return (
@@ -120,12 +134,14 @@ export default function ProductForm({ categories, product }: Props) {
             <input
               required
               value={form.name}
+              // Auto-generate the slug from the name while the user types.
               onChange={(e) => setForm({ ...form, name: e.target.value, slug: slugify(e.target.value) })}
               className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent text-sm focus:outline-none focus:border-accent"
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Slug</label>
+            {/* Slug is editable in case the auto-generated one conflicts */}
             <input
               value={form.slug}
               onChange={(e) => setForm({ ...form, slug: e.target.value })}
@@ -158,6 +174,7 @@ export default function ProductForm({ categories, product }: Props) {
             />
           </div>
           <div>
+            {/* compare_price is optional. When set, the storefront shows a strikethrough price and discount badge. */}
             <label className="block text-sm font-medium mb-1">Compare Price (Rs.)</label>
             <input
               type="number"
@@ -210,6 +227,8 @@ export default function ProductForm({ categories, product }: Props) {
         </div>
 
         <div className="flex gap-6">
+          {/* active: false hides the product from the storefront entirely */}
+          {/* featured: true includes the product in the homepage carousel and featured filter */}
           {(['active', 'featured'] as const).map((field) => (
             <label key={field} className="flex items-center gap-2 cursor-pointer">
               <input
@@ -228,7 +247,7 @@ export default function ProductForm({ categories, product }: Props) {
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6">
         <h2 className="font-semibold mb-4">Product Images</h2>
 
-        {/* URL input */}
+        {/* URL input -- useful for linking manufacturer images without downloading them */}
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1.5">Add Image via URL</label>
           <div className="flex gap-2">
@@ -248,7 +267,7 @@ export default function ProductForm({ categories, product }: Props) {
               Add URL
             </button>
           </div>
-          <p className="text-xs text-gray-400 mt-1">Paste any image URL from the web — ROG, MSI, or any product page.</p>
+          <p className="text-xs text-gray-400 mt-1">Paste any image URL from the web -- ROG, MSI, or any product page.</p>
         </div>
 
         <div className="relative flex items-center gap-3 mb-4">
@@ -257,6 +276,7 @@ export default function ProductForm({ categories, product }: Props) {
           <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
         </div>
 
+        {/* Drag-and-drop zone powered by react-dropzone */}
         <div
           {...getRootProps()}
           className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${
@@ -272,6 +292,7 @@ export default function ProductForm({ categories, product }: Props) {
           </p>
         </div>
 
+        {/* Image previews -- hover to reveal the delete button */}
         {images.length > 0 && (
           <div className="flex gap-3 mt-4 flex-wrap">
             {images.map((url) => (

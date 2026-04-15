@@ -74,7 +74,7 @@ export default function HeroCarousel({ products }: { products: Product[] }) {
         <div className="relative overflow-hidden bg-hb-bg">
           <div className="dot-grid absolute inset-0 pointer-events-none" />
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="relative min-h-[360px] sm:min-h-[420px] lg:min-h-[480px]">
+            <div className="relative">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={current}
@@ -82,7 +82,7 @@ export default function HeroCarousel({ products }: { products: Product[] }) {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  className="absolute inset-0 flex flex-col lg:flex-row items-center gap-8 lg:gap-20 py-10 lg:py-16"
+                  className="flex flex-col lg:flex-row items-center gap-8 lg:gap-20 py-10 lg:py-16"
                 >
                   {/* Text */}
                   <div className="flex-1 text-center lg:text-left order-2 lg:order-1">

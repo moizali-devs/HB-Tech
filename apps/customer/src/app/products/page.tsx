@@ -1,3 +1,6 @@
+// Product listing page -- server component with ISR (60s revalidate).
+// All filters are driven by URL search params so they are shareable and SEO-friendly.
+
 import { supabase } from '@/lib/supabase'
 import ProductCard from '@/components/ProductCard'
 import ProductFilters from '@/components/ProductFilters'
@@ -6,7 +9,14 @@ import type { Product, Category } from '@hb-tech/shared'
 export const revalidate = 60
 
 interface PageProps {
-  searchParams: { category?: string; condition?: string; min?: string; max?: string; featured?: string; q?: string }
+  searchParams: {
+    category?: string   // category slug
+    condition?: string  // 'new' | 'used' | 'refurbished' | 'open_box'
+    min?: string        // minimum price (string because URL params are always strings)
+    max?: string        // maximum price
+    featured?: string   // 'true' to show only featured products
+    q?: string          // name search query
+  }
 }
 
 async function getProducts(params: PageProps['searchParams']): Promise<Product[]> {
@@ -23,6 +33,8 @@ async function getProducts(params: PageProps['searchParams']): Promise<Product[]
   if (params.q) query = query.ilike('name', `%${params.q}%`)
 
   if (params.category) {
+    // Categories are filtered by slug in the URL, but stored by id in products.
+    // Look up the category id first, then apply it as an additional filter.
     const { data: cat } = await supabase
       .from('categories')
       .select('id')
@@ -46,6 +58,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     getCategories(),
   ])
 
+  // Derive a human-readable page title from the active filters.
   const title =
     searchParams.featured === 'true'
       ? 'Featured Products'
@@ -59,6 +72,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
         <h1 className="section-heading mb-2">{title}</h1>
 
         <div className="flex flex-col lg:flex-row gap-8 mt-8">
+          {/* Sidebar filters -- stacks above the grid on mobile */}
           <aside className="lg:w-64 shrink-0">
             <ProductFilters categories={categories} />
           </aside>

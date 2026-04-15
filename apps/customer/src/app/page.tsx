@@ -1,3 +1,6 @@
+// Homepage -- server component, ISR revalidated every 60 seconds.
+// Fetches all three data sets in parallel to keep TTFB low.
+
 import { supabase } from '@/lib/supabase'
 import HeroCarousel from '@/components/HeroCarousel'
 import ProductCard from '@/components/ProductCard'
@@ -20,6 +23,7 @@ async function getFeaturedProducts(): Promise<Product[]> {
   return (data as Product[]) ?? []
 }
 
+// Only root-level categories (parent_id = null) are shown on the homepage.
 async function getCategories(): Promise<Category[]> {
   const { data } = await supabase
     .from('categories')
@@ -48,9 +52,10 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-hb-bg">
+      {/* Hero: shows product carousel if featured products exist, otherwise a static lamp hero */}
       <HeroCarousel products={featuredProducts} />
 
-      {/* ── Categories ─────────────────────────────────────── */}
+      {/* Categories -- hidden if none exist yet */}
       {categories.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
           <div className="flex items-end justify-between mb-8">
@@ -66,7 +71,7 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ── Featured Products ──────────────────────────────── */}
+      {/* Featured Products -- hidden if none are marked featured */}
       {featuredProducts.length > 0 && (
         <section className="border-t border-slate-100 dark:border-hb-border">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
@@ -88,11 +93,10 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ── Promo Banner ───────────────────────────────────── */}
+      {/* WhatsApp CTA banner -- always visible */}
       <section className="border-t border-slate-100 dark:border-hb-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
           <div className="relative rounded-2xl overflow-hidden bg-slate-900 dark:bg-hb-surface border border-slate-800 dark:border-hb-border2 px-8 sm:px-12 py-12 sm:py-16 text-center">
-            {/* Background glow */}
             <div className="absolute inset-0 hero-glow pointer-events-none" />
             <div className="dot-grid absolute inset-0 pointer-events-none" />
 
@@ -118,7 +122,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── New Arrivals ───────────────────────────────────── */}
+      {/* New Arrivals -- hidden if no active products exist */}
       {newArrivals.length > 0 && (
         <section className="border-t border-slate-100 dark:border-hb-border">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">

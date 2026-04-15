@@ -1,8 +1,20 @@
+// Admin authentication middleware.
+// Runs on every request except static assets and API routes (see matcher below).
+//
+// Two-tier auth check:
+//   1. Supabase session -- ensures the user is signed in.
+//   2. Admins table check -- ensures the signed-in user is in our admins table.
+//      A valid Supabase session alone is not enough; the user must also exist
+//      in the admins table. This prevents regular Supabase users from accessing
+//      the panel if they somehow obtain credentials.
+
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(request: NextRequest) {
+  // Build a response object first so we can attach updated cookies to it.
+  // @supabase/ssr needs this to refresh the session token automatically.
   const response = NextResponse.next()
 
   const supabase = createServerClient(
@@ -26,18 +38,18 @@ export async function middleware(request: NextRequest) {
   const { data: { session } } = await supabase.auth.getSession()
   const { pathname } = request.nextUrl
 
-  // Allow login page without auth
+  // /login is the only public route. Redirect authenticated users to dashboard.
   if (pathname === '/login') {
     if (session) return NextResponse.redirect(new URL('/dashboard', request.url))
     return response
   }
 
-  // Protect all other routes
+  // No session -- redirect to login without further DB queries.
   if (!session) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Verify user is in admins table
+  // Session exists -- verify the user is in the admins table.
   const { data: admin } = await supabase
     .from('admins')
     .select('id')
@@ -45,11 +57,13 @@ export async function middleware(request: NextRequest) {
     .single()
 
   if (!admin) {
+    // Sign the user out so the invalid session cookie is cleared.
     await supabase.auth.signOut()
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('reason', 'not_admin')
     const redirectRes = NextResponse.redirect(loginUrl)
-    // Preserve cookie updates from signOut so session is cleared in the browser
+    // Copy cookie updates from the signOut call onto the redirect response,
+    // otherwise the browser never learns the session was cleared.
     response.cookies.getAll().forEach((c) => redirectRes.cookies.set(c.name, c.value, c))
     return redirectRes
   }
@@ -58,5 +72,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+  // Exclude Next.js internals, static files, and API routes from the middleware.
+  // API routes have their own auth via the service-role client.
   matcher: ['/((?!_next/static|_next/image|favicon.ico|api).*)'],
 }

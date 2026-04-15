@@ -1,3 +1,8 @@
+// Checkout page -- client component because it reads from the Zustand cart store.
+// There is no server-side order creation here. Instead, the user fills in their
+// details, then the form builds a pre-filled WhatsApp message and opens wa.me.
+// The team confirms the order manually over WhatsApp (Cash on Delivery model).
+
 'use client'
 
 import { useState } from 'react'
@@ -6,6 +11,8 @@ import Image from 'next/image'
 import { whatsAppOrderUrl } from '@/lib/constants'
 import { Banknote } from 'lucide-react'
 
+// Builds the WhatsApp message text from cart items and customer details.
+// Each item gets its own block so it reads cleanly in the chat.
 function buildOrderMessage(
   items: { name: string; price: number; quantity: number }[],
   customerName: string,
@@ -36,6 +43,7 @@ export default function CheckoutPage() {
     notes: '',
   })
 
+  // Show an empty-cart fallback before the form renders.
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-hb-bg flex items-center justify-center px-4">
@@ -53,12 +61,16 @@ export default function CheckoutPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    // Combine address and city into a single string for the WhatsApp message.
     const address = [form.delivery_address, form.city].filter(Boolean).join(', ')
     const message = buildOrderMessage(items, form.customer_name, address, form.notes)
     const url = whatsAppOrderUrl(message)
+    // Open WhatsApp in a new tab so the customer keeps the checkout page open.
     window.open(url, '_blank', 'noopener,noreferrer')
   }
 
+  // Field config array keeps the JSX DRY. 'as const' preserves the literal types
+  // so TypeScript can check that field.name is a valid key of the form state.
   const fields = [
     { name: 'customer_name', label: 'Full Name', type: 'text', required: true },
     { name: 'customer_email', label: 'Email Address', type: 'email', required: false },
@@ -73,6 +85,7 @@ export default function CheckoutPage() {
         <h1 className="section-heading mb-8">Checkout</h1>
 
         <form onSubmit={handleSubmit} className="grid lg:grid-cols-2 gap-10">
+          {/* Left column: customer details */}
           <div className="space-y-5">
             <h2 className="font-semibold text-lg text-slate-900 dark:text-white">
               Delivery Information
@@ -106,6 +119,7 @@ export default function CheckoutPage() {
               />
             </div>
 
+            {/* Payment method badge -- hardcoded to COD for now */}
             <div className="rounded-xl card-surface p-4 flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center shrink-0">
                 <Banknote size={24} className="text-emerald-500" />
@@ -119,6 +133,7 @@ export default function CheckoutPage() {
             </div>
           </div>
 
+          {/* Right column: order summary */}
           <div>
             <h2 className="font-semibold text-lg text-slate-900 dark:text-white mb-4">
               Order Summary
@@ -165,6 +180,7 @@ export default function CheckoutPage() {
               <span className="text-accent">Rs. {subtotal.toLocaleString('en-PK')}</span>
             </div>
 
+            {/* Submitting opens a pre-filled WhatsApp chat rather than posting to an API */}
             <button
               type="submit"
               className="w-full mt-6 btn-primary py-4 text-lg"

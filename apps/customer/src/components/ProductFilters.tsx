@@ -1,3 +1,7 @@
+// ProductFilters -- client component that drives the /products page via URL search params.
+// Every filter change pushes a new URL so the server re-fetches with the new params.
+// This means filters are shareable, bookmarkable, and work without any client state.
+
 'use client'
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
@@ -18,6 +22,8 @@ export default function ProductFilters({ categories }: { categories: Category[] 
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
+  // Merge a single key/value pair into the current search params and navigate.
+  // Passing an empty string removes the param so the URL stays clean.
   const updateParam = useCallback(
     (key: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString())
@@ -31,6 +37,7 @@ export default function ProductFilters({ categories }: { categories: Category[] 
     [router, pathname, searchParams]
   )
 
+  // Show the clear button only when at least one filter is active.
   const filterKeys = ['category', 'condition', 'min', 'max', 'q']
   const hasFilters = filterKeys.some((k) => searchParams.get(k) != null)
 
@@ -48,6 +55,7 @@ export default function ProductFilters({ categories }: { categories: Category[] 
         )}
       </div>
 
+      {/* Search -- triggers on Enter to avoid a request on every keystroke */}
       <div>
         <label className="text-xs font-semibold text-slate-500 dark:text-hb-muted uppercase tracking-wider mb-2 block">
           Search
@@ -109,6 +117,8 @@ export default function ProductFilters({ categories }: { categories: Category[] 
         </div>
       </div>
 
+      {/* Price range -- triggers on blur (when the user leaves the input) to avoid
+          refetching on every digit typed */}
       <div>
         <label className="text-xs font-semibold text-slate-500 dark:text-hb-muted uppercase tracking-wider mb-2 block">
           Price (Rs.)
@@ -134,4 +144,3 @@ export default function ProductFilters({ categories }: { categories: Category[] 
     </div>
   )
 }
-
