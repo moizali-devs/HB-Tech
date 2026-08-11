@@ -62,7 +62,7 @@ export default async function OrderConfirmedPage({ params }: Props) {
         <WhatsAppButton orderNumber={o.order_number} customerName={o.customer_name} total={o.total} />
 
         <p className="text-xs text-slate-400 dark:text-hb-muted mt-6">
-          We'll contact you on {o.customer_phone} to confirm your order.
+          We&apos;ll contact you on {o.customer_phone} to confirm your order.
         </p>
 
         <Link
