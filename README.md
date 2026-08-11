@@ -1,17 +1,17 @@
 # HB Tech
 
-**HB Tech** is a full-stack e-commerce platform for computer hardware and gaming peripherals in Pakistan — a storefront for customers and a companion admin panel to run it, built as a pnpm monorepo on Next.js 14 and Supabase.
+**HB Tech** is a full-stack e-commerce platform for computer hardware and gaming peripherals in Pakistan: a storefront for customers and a companion admin panel to run it, built as a pnpm monorepo on Next.js 14 and Supabase.
 
-There's no payment gateway. Checkout builds a pre-filled WhatsApp message from the cart and hands it off to the business number — orders are confirmed over chat, which matches how hardware retail actually closes sales in this market.
+There's no payment gateway. Checkout builds a pre-filled WhatsApp message from the cart and hands it off to the business number, orders are confirmed over chat, which matches how hardware retail actually closes sales in this market.
 
 ## Features
 
-- **Product catalog** — nested categories (one level deep), condition tags (`new` / `used` / `refurbished` / `open_box`), stock tracking, and multi-image products with drag-and-drop upload or direct URL import.
-- **Storefront** — server-rendered product/category pages with ISR (60s), URL-param-driven filters that are shareable and require no client state, and a Framer Motion cart drawer.
-- **WhatsApp checkout** — no payment integration to maintain; the cart becomes a pre-filled `wa.me` message on submit.
-- **Admin panel** — dashboard with low-stock warnings, full product/category/order CRUD, and admin account management gated behind a two-tier auth check (Supabase session **and** a row in the `admins` table).
-- **Row Level Security** — the storefront runs entirely on the Supabase anon key; RLS policies (not application code) enforce that anonymous reads only ever see active products and that writes require an authenticated admin.
-- **Shared types** — one `@hb-tech/shared` workspace package for database types, formatters (`formatPrice`, `slugify`), and Supabase client factories, so both apps stay in sync.
+- **Product catalog**: nested categories (one level deep), condition tags (`new` / `used` / `refurbished` / `open_box`), stock tracking, and multi-image products with drag-and-drop upload or direct URL import.
+- **Storefront**: server-rendered product/category pages with ISR (60s), URL-param-driven filters that are shareable and require no client state, and a Framer Motion cart drawer.
+- **WhatsApp checkout**: no payment integration to maintain; the cart becomes a pre-filled `wa.me` message on submit.
+- **Admin panel**: dashboard with low-stock warnings, full product/category/order CRUD, and admin account management gated behind a two-tier auth check (Supabase session and a row in the `admins` table).
+- **Row Level Security**: the storefront runs entirely on the Supabase anon key; RLS policies (not application code) enforce that anonymous reads only ever see active products and that writes require an authenticated admin.
+- **Shared types**: one `@hb-tech/shared` workspace package for database types, formatters (`formatPrice`, `slugify`), and Supabase client factories, so both apps stay in sync.
 
 ## Tech stack
 
@@ -33,8 +33,8 @@ There's no payment gateway. Checkout builds a pre-filled WhatsApp message from t
 ```
 HB-Tech/
 ├── apps/
-│   ├── customer/        Customer storefront — localhost:3000
-│   └── admin/           Admin panel — localhost:3001
+│   ├── customer/        Customer storefront, localhost:3000
+│   └── admin/           Admin panel, localhost:3001
 ├── packages/
 │   └── shared/          Types, formatters, Supabase client factories (@hb-tech/shared)
 ├── supabase/
@@ -44,7 +44,7 @@ HB-Tech/
     └── VERCEL-DEPLOYMENT.md
 ```
 
-Each app is a fully independent Next.js project that consumes `@hb-tech/shared` via pnpm's workspace resolution — no build step needed to pick up shared-package changes in development.
+Each app is a fully independent Next.js project that consumes `@hb-tech/shared` via pnpm's workspace resolution. No build step is needed to pick up shared-package changes in development.
 
 ## Getting started
 
@@ -72,7 +72,7 @@ pnpm dev:customer   # http://localhost:3000
 pnpm dev:admin      # http://localhost:3001
 ```
 
-The admin panel needs a first admin account seeded before you can log in — see [`DEVELOPER.md`](DEVELOPER.md#creating-the-first-admin).
+The admin panel needs a first admin account seeded before you can log in, see [`DEVELOPER.md`](DEVELOPER.md#creating-the-first-admin).
 
 ## Documentation
 
@@ -80,4 +80,4 @@ The admin panel needs a first admin account seeded before you can log in — see
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE).
